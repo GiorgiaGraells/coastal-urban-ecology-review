@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "### Coastal urban ecology review ### \n#https://cran.r-project.org/web/packages/bibliometrix/vignettes/bibliometrix-vignette.html\n\n##The bibliographic search was performed with ISI Web of Science (https://webofknowledge.com/), \n## Eligibility criteria included any article or review with the following keywords in topic:\n##(“urban ecology” or “urban environment*”) and (coast* or marine) \n##period of time: 1975-2016\n##Response: \n\n\ninstall.packages(\"bibliometrix\")\nlibrary(\"bibliometrix\", lib.loc=\"~/R/win-library/3.4\")\n\n## bibliometrix\n## A R tool for comprehensive bibliometric analysis of scientific literature\n## by Massimo Aria & Corrado Cuccurullo\n## http:\\\\www.bibliometrix.org\n\n###leer las citas grabadas desde ISI WOK\nreferencias <- readFiles(\"http://www.bibliometrix.org/datasets/savedrecs.bib\")\n\n###convertir referencias en un data frame\nM <- convert2df(referencias, dbsource = \"isi\", format = \"bibtex\")\n\n##Bibliometrics analysis\nresults <- biblioAnalysis(M, sep = \";\")\nS=summary(object = results, k = 10, pause = FALSE)\nplot(x = results, k = 10, pause = FALSE)\n",
+    "created" : 1500919532981.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "4170887008",
+    "id" : "C9924EE7",
+    "lastKnownWriteTime" : 1500929811,
+    "last_content_update" : 1500929811352,
+    "path" : "C:/Users/Capes 01/Google Drive/Documents/Documents/Review Urban ecology/Coastal urban ecology review/Coastal urban ecology review.Rproj",
+    "project_path" : "Coastal urban ecology review.Rproj",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "text"
+}

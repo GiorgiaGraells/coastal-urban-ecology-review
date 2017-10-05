@@ -1,0 +1,105 @@
+### Coastal urban ecology review ### 
+#https://cran.r-project.org/web/packages/bibliometrix/vignettes/bibliometrix-vignette.html
+
+##The bibliographic search was performed with ISI Web of Science (https://webofknowledge.com/), 
+## Eligibility criteria included any article or review with the following keywords in topic:
+##("urban ecology" or "urban environment*al") and (coast* or marine) 
+##period of time: 1975-2016
+##Response: 
+
+
+install.packages("bibliometrix")
+library("bibliometrix", lib.loc="~/R/win-library/3.4")
+
+## bibliometrix
+## A R tool for comprehensive bibliometric analysis of scientific literature
+## by Massimo Aria & Corrado Cuccurullo
+## http:\\www.bibliometrix.org
+
+###leer las citas grabadas desde ISI WOK
+referencias <- readFiles("http://www.bibliometrix.org/datasets/savedrecs.bib")
+
+###convertir referencias en un data frame
+M <- convert2df(referencias, dbsource = "isi", format = "bibtex")
+
+##Bibliometrics analysis
+results <- biblioAnalysis(M, sep = ";")
+S=summary(object = results, k = 10, pause = FALSE)
+plot(x = results, k = 10, pause = FALSE)
+
+
+#manejo bibliografia seleccionada y que se encuentra en archivo bibtex, 
+#comparación entre primera y segunda seleccion de articulos
+
+library(readr)
+bibliografia_review_0_426 <- read_csv("C:/Users/Capes 01/Google Drive/Documents/Documents/Review Urban ecology/bibtex/bibliografia review 0-426.csv")
+
+SelectedPapers21_03_17 <- read_delim("C:/Users/Capes 01/Google Drive/Documents/Documents/Review Urban ecology/bibtex/SelectedPapers21_03_17.csv", 
+                                     ";", escape_double = FALSE, trim_ws = TRUE)
+
+SelectedPapers21_03_17$Title
+bibliografia_review_0_426$Title
+
+library(dplyr)
+
+disjunt <- anti_join(SelectedPapers21_03_17, bibliografia_review_0_426, by = "Title")
+disjuntb <- anti_join(bibliografia_review_0_426,SelectedPapers21_03_17, by = "Title")
+View(disjunt)
+
+a <- disjunt[,c(2,3)]
+
+b <- disjuntb[,c(4,5)]
+
+disjuntc <- rbind(a,b)
+View(disjuntc)
+
+
+####UNIENDO BIBLIOGRAFIA###
+
+###comparacion giorgia nao (agregando los articulos que presentaban desacuerdos)###
+#desacuerdos revisados del 1975-2026#
+
+library(readxl)
+Comparacion_revision_giorgia_Nao <- read_excel("C:/Users/Capes 01/Google Drive/Documents/Documents/Review Urban ecology/Coastal urban ecology review/Comparacion revision giorgia-Nao.xlsx", sheet = "1975-2016")
+
+unique(Comparacion_revision_giorgia_Nao$`Agregado a bibliografia?`)
+
+colnames(Comparacion_revision_giorgia_Nao) <- make.names(colnames(Comparacion_revision_giorgia_Nao))
+
+library(dplyr)
+biblio_1975_2016<- filter(Comparacion_revision_giorgia_Nao,Agregado.a.bibliografia. =="Si" |Agregado.a.bibliografia. =="si")
+
+
+biblio_1975_2016$Información.extra
+biblio_1975_2016<-biblio_1975_2016[,-1]
+
+###agregando bibliografia 2017###
+biblio2017 <- read_excel("C:/Users/Capes 01/Google Drive/Documents/Documents/Review Urban ecology/Coastal urban ecology review/Comparacion revision giorgia-Nao.xlsx",sheet = "2017")
+View(biblio2017)
+
+colnames(biblio2017) <- make.names(colnames(biblio2017))
+
+biblio_2017<- filter(biblio2017,Agregado.a.bibliografia. =="Si" |Agregado.a.bibliografia. =="si")
+
+biblio_2017 <- biblio_2017[, -c(7,8,9)]
+
+
+###agregando las coincidencias giorgia-nao###
+#coincidencias 1975-2016
+library(readr)
+bibliografia_review_0_426 <- read_csv("C:/Users/Capes 01/Google Drive/Documents/Documents/Review Urban ecology/bibtex/bibliografia review 0-426.csv")
+
+SelectedPapers21_03_17 <- read_delim("C:/Users/Capes 01/Google Drive/Documents/Documents/Review Urban ecology/bibtex/SelectedPapers21_03_17.csv", 
+                                     ";", escape_double = FALSE, trim_ws = TRUE)
+
+Coin <- intersect(bibliografia_review_0_426$Title, SelectedPapers21_03_17$Title)
+
+Coin <-  merge(bibliografia_review_0_426, SelectedPapers21_03_17, by = "Title")
+
+
+###union bibliografias###
+biblio_completa <- rbind(biblio_1975_2016 , biblio_2017)
+biblio_completa <- bind_rows(Coin, biblio_completa)
+
+write_excel_csv(biblio_completa, "biblio_completa.csv")
+utils::View(biblio_completa)
